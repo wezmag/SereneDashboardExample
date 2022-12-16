@@ -7,3 +7,7 @@
 @section ContentHeader {
     <h1>@Localizer.Get("Navigation.Dashboard")</h1>
 }
+
+<div id="DashboardDiv"></div>
+
+<script type="module" src="@Html.ResolveWithHash("~/esm/Modules/Common/Dashboard/DashboardPage.js")"></script>

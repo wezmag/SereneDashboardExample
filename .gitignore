@@ -363,6 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Serenity
-_chunks
-Modules
-ServerTypes
+/DashboardSample/DashboardSample.Web/Modules/ServerTypes
+/DashboardSample/DashboardSample.Web/wwwroot/esm
