@@ -12,7 +12,17 @@
     <DotNetSergen Condition="Exists('$(DotNetSergenDir)sergen.exe')">$(DotNetSergenDir)sergen.exe</DotNetSergen>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="wwwroot\esm\Modules\**" />
+    <Compile Remove="wwwroot\esm\_chunks\**" />
+    <Content Remove="wwwroot\esm\Modules\**" />
+    <Content Remove="wwwroot\esm\_chunks\**" />
+    <EmbeddedResource Remove="wwwroot\esm\Modules\**" />
+    <EmbeddedResource Remove="wwwroot\esm\_chunks\**" />
+    <None Remove="wwwroot\esm\Modules\**" />
+    <None Remove="wwwroot\esm\_chunks\**" />
     <TypeScriptCompile Remove="node_modules\**"></TypeScriptCompile>
+    <TypeScriptCompile Remove="wwwroot\esm\Modules\**" />
+    <TypeScriptCompile Remove="wwwroot\esm\_chunks\**" />
     <EmbeddedResource Include="Migrations\**\*.sql" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
     <None Update="wwwroot\**\*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -49,8 +59,15 @@
   <Import Project="$(SerenitySrc)Serenity.Net.Web\Serenity.Net.Web.targets" Condition="Exists('$(SerenitySrc)Serenity.Net.sln')" />
   <ItemGroup>
     <PackageReference Include="Serenity.Extensions" Version="6.3.6" />
+    <!--<if:Northwind>-->
     <PackageReference Include="Serenity.Demo.Northwind" Version="6.3.6" />
+    <!--</if:Northwind>-->
+    <!--<if:BasicSamples>-->
     <PackageReference Include="Serenity.Demo.BasicSamples" Version="6.3.6" />
+    <!--</if:BasicSamples>-->
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\esm\" />
   </ItemGroup>
   <Import Project="$(ProSrc)Serenity.Pro.Coder\Serenity.Pro.Coder.targets" Condition="Exists('$(ProSrc)pro-features.sln')" />
   <Target Name="CreateInputsOutputs" BeforeTargets="BeforeBuild">
