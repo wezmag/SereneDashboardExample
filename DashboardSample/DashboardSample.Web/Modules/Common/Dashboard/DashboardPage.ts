@@ -1,4 +1,5 @@
 import { Decorators, TemplatedWidget } from "@serenity-is/corelib";
+import { SalesByCategoryWidget } from "./SalesByCategoryWidget/SalesByCategoryWidget";
 import { StatisticsWidget } from "./StatisticsWidget/StatisticsWidget";
 
 $(() => {
@@ -11,5 +12,6 @@ export class DashboardPage extends TemplatedWidget<any> {
         super(container);
 
         new StatisticsWidget(this.byId('StatisticsWidget')).init();
+        new SalesByCategoryWidget(this.byId('ChartAreaRight1')).init();
     }
 }

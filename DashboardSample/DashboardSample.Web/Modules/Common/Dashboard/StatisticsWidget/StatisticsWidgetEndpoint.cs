@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Serenity;
 using Serenity.Abstractions;
 using Serenity.Data;
@@ -15,7 +13,7 @@ namespace DashboardSample.Common
     [ConnectionKey(typeof(OrderRow))]
     public class StatisticsWidgetController : ServiceEndpoint
     {
-        public StatisticsWidgetResponse GetStatistics(IDbConnection connection, StatisticsWidgetRequest request,
+        public StatisticsWidgetResponse GetStatistics(IDbConnection connection, TimeRangeRequest request,
             [FromServices] ITwoLevelCache cache)
         {
             if (request is null)
@@ -24,27 +22,10 @@ namespace DashboardSample.Common
             if (!request.TimeRange.HasValue)
                 throw new ArgumentNullException(nameof(request.TimeRange));
 
-            //The date of the last order is 2022-12-16 in the sample database, so we use that as end date.
+            //The date of the lastest order is 2022-12-16 in the sample database, so we use that as end date.
             //In real world, you need to use DateTime.Now.Date.
             var endDate = new DateTime(2022, 12, 16);
-            //var endDate = DateTime.Now.Date;
-            DateTime startDate = endDate;
-            switch (request.TimeRange)
-            {
-                case TimeRange.Last30Days:
-                    startDate = endDate.AddDays(-30).Date;
-                    break;
-                case TimeRange.Last3Months:
-                    startDate = endDate.AddMonths(-3).Date;
-                    break;
-                case TimeRange.Last6Months:
-                    startDate = endDate.AddMonths(-6).Date;
-                    break;
-                case TimeRange.Last12Months:
-                    startDate = endDate.AddMonths(-12).Date;
-                    break;
-            }
-
+            var startDate = TimeRangeHelper.GetStartDate(endDate, request.TimeRange.Value);
             var o = OrderRow.Fields;
             return cache.GetLocalStoreOnly($"StatisticsWidget.GetResponse.{request.TimeRange}",
                 TimeSpan.FromMinutes(5),
@@ -64,11 +45,6 @@ namespace DashboardSample.Common
                     };
                 });
         }
-    }
-
-    public class StatisticsWidgetRequest : ServiceRequest
-    {
-        public TimeRange? TimeRange { get; set; }
     }
 
     public class StatisticsWidgetResponse : ServiceResponse

@@ -1,9 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Serenity;
-using Serenity.Abstractions;
-using Serenity.Data;
 using Serenity.Web;
-using System;
 
 namespace DashboardSample.Common.Pages
 {
