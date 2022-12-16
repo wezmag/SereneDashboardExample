@@ -1,0 +1,94 @@
+﻿using Serenity.Data;
+using Serenity.Services;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using MyRow = DashboardSample.Administration.UserRoleRow;
+
+namespace DashboardSample.Administration.Repositories
+{
+    public class UserRoleRepository : BaseRepository
+    {
+        public UserRoleRepository(IRequestContext context)
+             : base(context)
+        {
+        }
+
+        private static MyRow.RowFields Fld { get { return MyRow.Fields; } }
+
+        public SaveResponse Update(IUnitOfWork uow, UserRoleUpdateRequest request)
+        {
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+            if (request.UserID is null)
+                throw new ArgumentNullException(nameof(request.UserID));
+            if (request.Roles is null)
+                throw new ArgumentNullException(nameof(request.Roles));
+
+            var userID = request.UserID.Value;
+            var oldList = new HashSet<Int32>(
+                GetExisting(uow.Connection, userID)
+                .Select(x => x.RoleId.Value));
+
+            var newList = new HashSet<Int32>(request.Roles.ToList());
+
+            if (oldList.SetEquals(newList))
+                return new SaveResponse();
+
+            foreach (var k in oldList)
+            {
+                if (newList.Contains(k))
+                    continue;
+
+                new SqlDelete(Fld.TableName)
+                    .Where(
+                        new Criteria(Fld.UserId) == userID &
+                        new Criteria(Fld.RoleId) == k)
+                    .Execute(uow.Connection);
+            }
+
+            foreach (var k in newList)
+            {
+                if (oldList.Contains(k))
+                    continue;
+
+                uow.Connection.Insert(new MyRow
+                {
+                    UserId = userID,
+                    RoleId = k
+                });
+            }
+
+            Cache.InvalidateOnCommit(uow, Fld);
+            Cache.InvalidateOnCommit(uow, UserPermissionRow.Fields);
+
+            return new SaveResponse();
+        }
+
+        private List<MyRow> GetExisting(IDbConnection connection, Int32 userId)
+        {
+            return connection.List<MyRow>(q =>
+            {
+                q.Select(Fld.UserRoleId, Fld.RoleId)
+                    .Where(new Criteria(Fld.UserId) == userId);
+            });
+        }
+
+        public UserRoleListResponse List(IDbConnection connection, UserRoleListRequest request)
+        {
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+            if (request.UserID is null)
+                throw new ArgumentNullException(nameof(request.UserID));
+
+            var response = new UserRoleListResponse
+            {
+                Entities = GetExisting(connection, request.UserID.Value)
+                .Select(x => x.RoleId.Value).ToList()
+            };
+
+            return response;
+        }
+    }
+}
