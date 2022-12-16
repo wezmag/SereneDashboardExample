@@ -1,0 +1,81 @@
+<style>
+    .statistics-card h3 {
+        color: #fff;
+        font-size: 50px;
+    }
+    .statistics-card p {
+        color: #fff;
+        font-size: 18px;
+    }
+    .statistics-card .icon {
+        transition: all 0.3s linear;
+        position: absolute;
+        top: 13px;
+        color: #fff;
+        opacity: 0.9;
+        right: 10px;
+        font-size: 64px;
+    }
+
+    .statistics-card:hover .icon {
+        font-size: 70px;
+    }
+</style>
+<div id="~_StatisticsWidget" class="statistics card">
+    <div class="card-header bg-white">
+        <h4 class="card-title float-start">
+            <i class="fa fa-bullhorn text-danger"></i>
+            Statistics</h4>
+        <div class="float-end">
+            <input type="text" id="~_TimeSelect" />
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md col-sm-6 mb-md-0 mb-2">
+                <div class="card bg-primary bg-opacity-75 statistics-card">
+                    <div class="card-body">
+                        <h3 id="~_ClosedOrder"></h3>
+                        <p>Closed Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-truck"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md col-sm-6 mb-md-0 mb-2">
+                <div class="card bg-info bg-opacity-75 statistics-card">
+                    <div class="card-body">
+                        <h3 id="~_OpenOrder"></h3>
+                        <p>Open Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-shopping-cart"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md col-sm-6 mb-md-0 mb-2">
+                <div class="card bg-warning bg-opacity-75 statistics-card">
+                    <div class="card-body">
+                        <h3 id="~_TotalOrder"></h3>
+                        <p>Total Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-diamond"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md col-sm-6 mb-md-0 mb-2">
+                <div class="card bg-success bg-opacity-75 statistics-card">
+                    <div class="card-body">
+                        <h3><span id="~_CloseRateOrder"></span><sup style="font-size: 20px">%</sup></h3>
+                        <p>Closed Rate</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-pie-chart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
