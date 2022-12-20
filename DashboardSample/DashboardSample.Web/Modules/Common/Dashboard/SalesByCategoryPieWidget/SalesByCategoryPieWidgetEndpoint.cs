@@ -1,5 +1,7 @@
 using DashboardSample.Common.Chart;
 using Microsoft.AspNetCore.Mvc;
+using Serenity;
+using Serenity.Abstractions;
 using Serenity.Data;
 using Serenity.Demo.Northwind;
 using Serenity.Services;
@@ -16,8 +18,9 @@ namespace DashboardSample.Common
     public class SalesByCategoryPieWidgetController : ServiceEndpoint
     {
         [HttpPost]
-        
-        public SalesByCategoryPieWidgetResponse GetResponse(IDbConnection connection, SalesByCategoryPieWidgetRequest request)
+
+        public SalesByCategoryPieWidgetResponse GetResponse(IDbConnection connection, SalesByCategoryPieWidgetRequest request,
+            [FromServices] ITwoLevelCache cache)
         {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -60,11 +63,17 @@ GROUP BY c.CategoryID, c.CategoryName");
                 sql.Append(@"
 GROUP BY p.ProductID, p.ProductName");
 
+            sql.Append(@"
+ORDER BY Data DESC");
 
-            return new SalesByCategoryPieWidgetResponse
+
+            return cache.GetLocalStoreOnly($"SalesByCategoryPieWidget.GetResponse.{request.CategoryId}.{request.TimeRange}", TimeSpan.FromMinutes(5), OrderRow.Fields.GenerationKey, () =>
             {
-                Points = connection.Query<ChartPoint>(sql.ToString(), new { request.CategoryId, startDate, endDate }).ToList()
-            };
+                return new SalesByCategoryPieWidgetResponse
+                {
+                    Points = connection.Query<ChartPoint>(sql.ToString(), new { request.CategoryId, startDate, endDate }).ToList()
+                };
+            });
         }
     }
 
