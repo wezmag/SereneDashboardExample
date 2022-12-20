@@ -1,5 +1,5 @@
 import { Decorators, Select2Editor, Select2EditorOptions, TemplatedWidget } from "@serenity-is/corelib";
-import { tryFirst } from "@serenity-is/corelib/q";
+import { format, tryFirst } from "@serenity-is/corelib/q";
 import Chart from 'chart.js/auto';
 import * as ChartGeo from 'chartjs-chart-geo';
 import { ChoroplethChart } from 'chartjs-chart-geo';
@@ -52,7 +52,15 @@ export class SalesMapWidget extends TemplatedWidget<any> {
                             }
                         },
                         plugins: {
-                            legend: { display: false }
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (item) => {
+                                        const d = item.dataset.data[item.dataIndex];
+                                        return format('{0}: {1}', d.feature.properties.name, new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(d.value));
+                                    }
+                                }
+                            }
                         }
                     }
                 });

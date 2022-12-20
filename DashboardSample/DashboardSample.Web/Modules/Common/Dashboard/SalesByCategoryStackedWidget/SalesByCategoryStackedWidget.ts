@@ -52,9 +52,20 @@ export class SalesByCategoryStackedWidget extends TemplatedWidget<any>
                             mode: 'index',
                             filter: (e) => e.raw !== 0,
                             callbacks: {
+                                label: item => {
+                                    let label = item.dataset.label || '';
+
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (item.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.parsed.y);
+                                    }
+                                    return label;
+                                },
                                 footer: items => {
                                     let total = items.reduce((s, a) => s + Number(a.raw), 0);
-                                    return format('Total: {0}', total);
+                                    return format('Total: {0}', new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total));
                                 }
                             }
                         }

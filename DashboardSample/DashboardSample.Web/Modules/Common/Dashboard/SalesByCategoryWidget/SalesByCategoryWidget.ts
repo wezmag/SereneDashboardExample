@@ -42,7 +42,22 @@ export class SalesByCategoryWidget extends TemplatedWidget<any> {
                         }
                     },
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (item) => {
+                                    let label = item.dataset.label || '';
+
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (item.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.parsed.y);
+                                    }
+                                    return label;
+                                },
+                            }
+                        }
                     }
                 }
             });
@@ -57,7 +72,6 @@ export class SalesByCategoryWidget extends TemplatedWidget<any> {
             this.myChart.data = {
                 labels: response.ChartPoints.map(v => v.Label),
                 datasets: [{
-                    label: '',
                     data: response.ChartPoints.map(v => v.Data),
                     backgroundColor: randomColor({ luminosity: 'light' }),
                     barPercentage: 0.5

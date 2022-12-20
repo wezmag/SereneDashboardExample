@@ -41,7 +41,22 @@ export class SalesByEmployeeWidget extends TemplatedWidget<any> {
                     responsive: true,
                     maintainAspectRatio: true,
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (item) => {
+                                    let label = item.dataset.label || '';
+
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (item.parsed.x !== null) {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.parsed.x);
+                                    }
+                                    return label;
+                                },
+                            }
+                        }
                     }
                 }
             });
@@ -57,7 +72,6 @@ export class SalesByEmployeeWidget extends TemplatedWidget<any> {
                 this.myChart.data = {
                     labels: response.ChartPoints.map(v => v.Label),
                     datasets: [{
-                        label: '',
                         data: response.ChartPoints.map(v => v.Data),
                         barPercentage: 0.5
                     }]
