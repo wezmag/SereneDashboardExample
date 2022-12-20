@@ -1,6 +1,7 @@
 import { Decorators, TemplatedWidget } from "@serenity-is/corelib";
 import { SalesByCategoryStackedWidget } from "./SalesByCategoryStackedWidget/SalesByCategoryStackedWidget";
 import { SalesByCategoryWidget } from "./SalesByCategoryWidget/SalesByCategoryWidget";
+import { SalesByEmployeeWidget } from "./SalesByEmployeeWidget/SalesByEmployeeWidget";
 import { StatisticsWidget } from "./StatisticsWidget/StatisticsWidget";
 
 $(() => {
@@ -15,5 +16,7 @@ export class DashboardPage extends TemplatedWidget<any> {
         new StatisticsWidget(this.byId('StatisticsWidget')).init();
         new SalesByCategoryWidget(this.byId('ChartAreaRight1')).init();
         new SalesByCategoryStackedWidget(this.byId('ChartAreaRight2')).init();
+
+        new SalesByEmployeeWidget(this.byId('ChartAreaLeft1')).init();
     }
 }

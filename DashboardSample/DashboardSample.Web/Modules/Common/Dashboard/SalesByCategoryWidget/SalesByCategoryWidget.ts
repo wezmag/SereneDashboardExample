@@ -62,7 +62,7 @@ export class SalesByCategoryWidget extends TemplatedWidget<any> {
                     backgroundColor: randomColor({ luminosity: 'light' }),
                     barPercentage: 0.5
                 }]
-            }
+            };
 
             this.myChart.update();
 
