@@ -1,5 +1,4 @@
 using DashboardSample.Common.Chart;
-using FluentMigrator.Runner.Generators.Redshift;
 using Microsoft.AspNetCore.Mvc;
 using Serenity;
 using Serenity.Abstractions;
@@ -10,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DashboardSample.Common
 {
@@ -19,6 +16,7 @@ namespace DashboardSample.Common
     [ConnectionKey(typeof(OrderRow))]
     public class SalesByCategoryWidgetController : ServiceEndpoint
     {
+        [HttpPost]
         public SalesByCategoryWidgetResponse GetResponse(IDbConnection connection, TimeRangeRequest request,
             [FromServices] ITwoLevelCache cache)
         {
@@ -33,7 +31,7 @@ namespace DashboardSample.Common
             var endDate = new DateTime(2022, 12, 16);
             var startDate = TimeRangeHelper.GetStartDate(endDate, request.TimeRange.Value);
             var sql = @"
-SELECT c.CategoryName AS Label, ISNULL(s.Sales, 0) AS Value
+SELECT c.CategoryName AS Label, ISNULL(s.Sales, 0) AS Data
 FROM Categories c
 LEFT JOIN (
 SELECT c.CategoryID, SUM(od.ExtendedPrice) AS Sales

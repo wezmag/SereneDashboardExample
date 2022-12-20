@@ -58,7 +58,7 @@ export class SalesByCategoryWidget extends TemplatedWidget<any> {
                 labels: response.ChartPoints.map(v => v.Label),
                 datasets: [{
                     label: '',
-                    data: response.ChartPoints.map(v => v.Value),
+                    data: response.ChartPoints.map(v => v.Data),
                     backgroundColor: randomColor({ luminosity: 'light' }),
                     barPercentage: 0.5
                 }]
