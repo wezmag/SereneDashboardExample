@@ -1,5 +1,7 @@
 using DashboardSample.Common.Chart;
 using Microsoft.AspNetCore.Mvc;
+using Serenity;
+using Serenity.Abstractions;
 using Serenity.Data;
 using Serenity.Demo.Northwind;
 using Serenity.Services;
@@ -15,7 +17,8 @@ namespace DashboardSample.Common
     [ConnectionKey(typeof(OrderRow))]
     public class SalesMapWidgetController : ServiceEndpoint
     {
-        public SalesMapWidgetResponse GetResponse(IDbConnection connection, SalesMapWidgetRequest request)
+        public SalesMapWidgetResponse GetResponse(IDbConnection connection, SalesMapWidgetRequest request,
+            [FromServices] ITwoLevelCache cache)
         {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -32,10 +35,17 @@ AND LEFT(CONVERT(NVARCHAR, o.OrderDate, 23), 7) = @SelectMonth");
             }
             sql.Append(@"
 GROUP BY ShipCountry");
-            return new SalesMapWidgetResponse
+
+            return cache.GetLocalStoreOnly($"SalesMapWidget.GetResponse.{request.SelectMonth}",
+                TimeSpan.FromMinutes(5),
+                OrderRow.Fields.GenerationKey,
+                () =>
             {
-                ChartPoints = connection.Query<ChartPoint>(sql.ToString(), new { request.SelectMonth }).ToList()
-            };
+                return new SalesMapWidgetResponse
+                {
+                    ChartPoints = connection.Query<ChartPoint>(sql.ToString(), new { request.SelectMonth }).ToList()
+                };
+            });
         }
     }
 

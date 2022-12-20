@@ -1,5 +1,7 @@
 using DashboardSample.Common.Chart;
 using Microsoft.AspNetCore.Mvc;
+using Serenity;
+using Serenity.Abstractions;
 using Serenity.Data;
 using Serenity.Demo.Northwind;
 using Serenity.Services;
@@ -16,22 +18,29 @@ namespace DashboardSample.Common
     public class SalesByEmployeeWidgetController : ServiceEndpoint
     {
         [HttpPost]
-        public ServiceResponse GetMonthSelect(IDbConnection connection, ServiceRequest request)
+        public ServiceResponse GetMonthSelect(IDbConnection connection, ServiceRequest request,
+            [FromServices] ITwoLevelCache cache)
         {
             var sql = @"
 SELECT DISTINCT LEFT(CONVERT(NVARCHAR, OrderDate, 23), 7) AS MonthSelect
 FROM Orders AS o
 ORDER BY LEFT(CONVERT(NVARCHAR, OrderDate, 23), 7) DESC";
             var monthSelects = connection.Query<string>(sql).ToList();
-            return new ServiceResponse {
-                CustomData = new Dictionary<string, object> {
-                    { "MonthSelects", monthSelects }
-                }
-            };
+            return cache.GetLocalStoreOnly("SalesByEmployeeWidget.GetMonthSelect",
+                TimeSpan.FromMinutes(5),
+                OrderRow.Fields.GenerationKey,
+                () =>
+                {
+                    return new ServiceResponse
+                    {
+                        CustomData = new Dictionary<string, object> { { "MonthSelects", monthSelects } }
+                    };
+                });
         }
 
         [HttpPost]
-        public SalesByEmployeeResponse GetResponse(IDbConnection connection, SalesByEmployeeRequest request)
+        public SalesByEmployeeResponse GetResponse(IDbConnection connection, SalesByEmployeeRequest request,
+            [FromServices] ITwoLevelCache cache)
         {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -53,11 +62,16 @@ AND LEFT(CONVERT(NVARCHAR, OrderDate, 23), 7) = @SelectMonth");
             sql.Append(@"
 GROUP BY e.EmployeeID) AS s ON s.EmployeeID = e.EmployeeID
 ORDER BY Sales DESC");
-
-            return new SalesByEmployeeResponse
-            {
-                ChartPoints = connection.Query<ChartPoint>(sql.ToString(), new { request.SelectMonth }).ToList()
-            };
+            return cache.GetLocalStoreOnly($"SalesByEmployeeWidget.GetResponse.{request.SelectMonth}",
+                TimeSpan.FromMinutes(5),
+                OrderRow.Fields.GenerationKey,
+                () =>
+                {
+                    return new SalesByEmployeeResponse
+                    {
+                        ChartPoints = connection.Query<ChartPoint>(sql.ToString(), new { request.SelectMonth }).ToList()
+                    };
+                });
         }
     }
 

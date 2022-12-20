@@ -1,14 +1,14 @@
 using DashboardSample.Common.Chart;
 using Microsoft.AspNetCore.Mvc;
-using NUglify.Helpers;
+using Serenity;
 using Serenity.Abstractions;
 using Serenity.Data;
+using Serenity.Demo.Northwind;
 using Serenity.Services;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Cryptography.Xml;
 
 namespace DashboardSample.Common
 {
@@ -60,11 +60,16 @@ ORDER BY c.CategoryName, p.ProductName";
                     Datas = datas
                 });
             }
-
-            return new SalesByCategoryStackedWidgetResponse()
-            {
-                CategorySales = categorySales
-            };
+            return cache.GetLocalStoreOnly($"SalesByCategoryStackedWidget.GetResponse.{request.TimeRange}",
+                TimeSpan.FromMinutes(5),
+                OrderRow.Fields.GenerationKey,
+                () =>
+                {
+                    return new SalesByCategoryStackedWidgetResponse()
+                    {
+                        CategorySales = categorySales
+                    };
+                });
         }
         private class ProductSales
         {
