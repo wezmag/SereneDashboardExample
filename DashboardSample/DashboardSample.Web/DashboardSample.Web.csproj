@@ -52,18 +52,18 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Serenity.Assets" Version="6.3.6" />
-    <PackageReference Include="Serenity.Scripts" Version="6.3.6" />
-    <PackageReference Include="Serenity.Net.Web" Version="6.3.6" />
+    <PackageReference Include="Serenity.Assets" Version="6.4.2" />
+    <PackageReference Include="Serenity.Scripts" Version="6.4.2" />
+    <PackageReference Include="Serenity.Net.Web" Version="6.4.2" />
   </ItemGroup>
   <Import Project="$(SerenitySrc)Serenity.Net.Web\Serenity.Net.Web.targets" Condition="Exists('$(SerenitySrc)Serenity.Net.sln')" />
   <ItemGroup>
-    <PackageReference Include="Serenity.Extensions" Version="6.3.6" />
+    <PackageReference Include="Serenity.Extensions" Version="6.4.2" />
     <!--<if:Northwind>-->
-    <PackageReference Include="Serenity.Demo.Northwind" Version="6.3.6" />
+    <PackageReference Include="Serenity.Demo.Northwind" Version="6.4.2" />
     <!--</if:Northwind>-->
     <!--<if:BasicSamples>-->
-    <PackageReference Include="Serenity.Demo.BasicSamples" Version="6.3.6" />
+    <PackageReference Include="Serenity.Demo.BasicSamples" Version="6.4.2" />
     <!--</if:BasicSamples>-->
   </ItemGroup>
   <ItemGroup>

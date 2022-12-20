@@ -542,7 +542,8 @@ declare namespace Q {
      *
      * @source underscore.js
      */
-    function debounce(func: Function, wait?: number, immediate?: boolean): () => any;
+    function debounce(func: Function, wait?: number, immediate?: boolean): any;
+    function mockDebounce(f: typeof debounce): void;
 
     interface DialogButton {
         text?: string;
@@ -898,7 +899,7 @@ declare namespace Q {
         quickFilterSeparator?: boolean;
         quickFilterCssClass?: string;
     }
-    interface PropertyItemsData$1 {
+    interface PropertyItemsData {
         items: PropertyItem[];
         additionalItems: PropertyItem[];
     }
@@ -944,11 +945,6 @@ declare namespace Q {
     function getLookupAsync<TItem>(key: string): Promise<Q.Lookup<TItem>>;
     function reloadLookup(key: string): void;
     function reloadLookupAsync(key: string): Promise<any>;
-    interface PropertyItemsData {
-        items: PropertyItem[];
-        additionalItems: PropertyItem[];
-        type: "form" | "columns";
-    }
     function getColumns(key: string): PropertyItem[];
     function getColumnsData(key: string): PropertyItemsData;
     function getColumnsAsync(key: string): Promise<PropertyItem[]>;
@@ -1143,20 +1139,20 @@ declare namespace Slick {
     	/** when returning a formatter result, prefer ctx.escape() to avoid html injection attacks! */
     	value?: any;
     }
-    type ColumnFormat<TItem = any> = (ctx: FormatterContext<TItem>) => string;
+    export type ColumnFormat<TItem = any> = (ctx: FormatterContext<TItem>) => string;
     interface CompatFormatterResult {
     	addClasses?: string;
     	text?: string;
     	toolTip?: string;
     }
-    type CompatFormatter<TItem = any> = (row: number, cell: number, value: any, column: Column<TItem>, item: TItem, grid?: any) => string | CompatFormatterResult;
+    export type CompatFormatter<TItem = any> = (row: number, cell: number, value: any, column: Column<TItem>, item: TItem, grid?: any) => string | CompatFormatterResult;
     interface FormatterFactory<TItem = any> {
     	getFormat?(column: Column<TItem>): ColumnFormat<TItem>;
     	getFormatter?(column: Column<TItem>): CompatFormatter<TItem>;
     }
-    type AsyncPostRender<TItem = any> = (cellNode: HTMLElement, row: number, item: TItem, column: Column<TItem>, reRender: boolean) => void;
-    type AsyncPostCleanup<TItem = any> = (cellNode: HTMLElement, row?: number, column?: Column<TItem>) => void;
-    type CellStylesHash = {
+    export type AsyncPostRender<TItem = any> = (cellNode: HTMLElement, row: number, item: TItem, column: Column<TItem>, reRender: boolean) => void;
+    export type AsyncPostCleanup<TItem = any> = (cellNode: HTMLElement, row?: number, column?: Column<TItem>) => void;
+    export type CellStylesHash = {
     	[row: number]: {
     		[columnId: string]: string;
     	};
@@ -1273,7 +1269,7 @@ declare namespace Slick {
     	 */
     	max?: any;
     }
-    type Handler<TArgs, TEventData extends IEventData = IEventData> = (e: TEventData, args: TArgs) => void;
+    export type Handler<TArgs, TEventData extends IEventData = IEventData> = (e: TEventData, args: TArgs) => void;
     interface IEventData {
     	readonly type?: string;
     	currentTarget?: EventTarget | null;
@@ -2124,7 +2120,7 @@ declare namespace Slick {
     interface ArgsColumnNode extends ArgsColumn {
     	node: HTMLElement;
     }
-    type ArgsSortCol = {
+    export type ArgsSortCol = {
     	sortCol: Column;
     	sortAsc: boolean;
     };
@@ -2448,6 +2444,7 @@ declare namespace Slick {
 
 declare namespace Serenity {
     export import ColumnSelection = Q.ColumnSelection;
+    export import Criteria = Q.Criteria;
     export import DeleteRequest = Q.DeleteRequest;
     export import DeleteResponse = Q.DeleteResponse;
     export import ISlickFormatter = Q.ISlickFormatter;
@@ -2473,35 +2470,6 @@ declare namespace Serenity {
     export import UndeleteResponse = Q.UndeleteResponse;
     export import Formatter = Slick.Formatter;
 
-
-    function Criteria(field: string): any[];
-    namespace Criteria {
-        function isEmpty(c: any[]): boolean;
-        function join(c1: any[], op: string, c2: any[]): any[];
-        function paren(c: any[]): any[];
-        function and(c1: any[], c2: any[], ...rest: any[][]): any[];
-        function or(c1: any[], c2: any[], ...rest: any[][]): any[];
-        enum Operator {
-            paren = "()",
-            not = "not",
-            isNull = "is null",
-            isNotNull = "is not null",
-            exists = "exists",
-            and = "and",
-            or = "or",
-            xor = "xor",
-            eq = "=",
-            ne = "!=",
-            gt = ">",
-            ge = ">=",
-            lt = "<",
-            le = "<=",
-            in = "in",
-            notIn = "not in",
-            like = "like",
-            notLike = "not like"
-        }
-    }
 
     class IBooleanValue {
     }
@@ -3633,6 +3601,8 @@ declare namespace Serenity {
         progress?: JQuery;
         inputName?: string;
         allowMultiple?: boolean;
+        uploadIntent?: string;
+        uploadUrl?: string;
         fileDone?: (p1: UploadResponse, p2: string, p3: any) => void;
     }
     interface UploadResponse {
@@ -3655,6 +3625,8 @@ declare namespace Serenity {
 
     interface FileUploadEditorOptions extends FileUploadConstraints {
         displayFileName?: boolean;
+        uploadIntent?: string;
+        uploadUrl?: string;
         urlPrefix?: string;
     }
     interface ImageUploadEditorOptions extends FileUploadEditorOptions {
@@ -3694,6 +3666,7 @@ declare namespace Serenity {
         protected progress: JQuery;
         protected hiddenInput: JQuery;
         constructor(div: JQuery, opt: ImageUploadEditorOptions);
+        protected getUploadInputOptions(): UploadInputOptions;
         protected addFileButtonText(): string;
         protected getToolButtons(): ToolButton[];
         protected populate(): void;
