@@ -8,6 +8,7 @@
     "@types/jqueryui": "1.12.6",
     "@types/toastr": "2.1.39",
     "chart.js": "^4.0.1",
+    "chartjs-chart-geo": "^4.1.0",
     "randomcolor": "^0.6.2"
   },
   "devDependencies": {

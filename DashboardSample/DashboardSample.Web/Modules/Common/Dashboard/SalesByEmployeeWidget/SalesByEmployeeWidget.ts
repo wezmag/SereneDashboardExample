@@ -1,5 +1,4 @@
 import { Decorators, Select2Editor, Select2EditorOptions, TemplatedWidget } from "@serenity-is/corelib";
-import { indexOf } from "@serenity-is/corelib/q";
 import Chart from "chart.js/auto";
 import { SalesByEmployeeWidgetService } from "../../../ServerTypes/Common/SalesByEmployeeWidgetService";
 
@@ -13,7 +12,7 @@ export class SalesByEmployeeWidget extends TemplatedWidget<any> {
 
         this.initMonthSelect();
         this.initChart();
-        this.populateDate();
+        this.populateData();
     }
 
     private initMonthSelect(): void {
@@ -28,7 +27,7 @@ export class SalesByEmployeeWidget extends TemplatedWidget<any> {
             this.monthSelect.value = '';
         });
 
-        this.monthSelect.change(() => this.populateDate());
+        this.monthSelect.change(() => this.populateData());
     }
 
     private initChart(): void {
@@ -49,7 +48,7 @@ export class SalesByEmployeeWidget extends TemplatedWidget<any> {
         }
     }
 
-    private populateDate(): void {
+    private populateData(): void {
         SalesByEmployeeWidgetService.GetResponse(
             {
                 SelectMonth: this.monthSelect.value
