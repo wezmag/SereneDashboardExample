@@ -1,4 +1,5 @@
 import { Decorators, TemplatedWidget } from "@serenity-is/corelib";
+import { SalesByCategoryPieWidget } from "./SalesByCategoryPieWidget/SalesByCategoryPieWidget";
 import { SalesByCategoryStackedWidget } from "./SalesByCategoryStackedWidget/SalesByCategoryStackedWidget";
 import { SalesByCategoryWidget } from "./SalesByCategoryWidget/SalesByCategoryWidget";
 import { SalesByEmployeeWidget } from "./SalesByEmployeeWidget/SalesByEmployeeWidget";
@@ -17,6 +18,7 @@ export class DashboardPage extends TemplatedWidget<any> {
         new StatisticsWidget(this.byId('StatisticsWidget')).init();
         new SalesByCategoryWidget(this.byId('ChartAreaRight1')).init();
         new SalesByCategoryStackedWidget(this.byId('ChartAreaRight2')).init();
+        new SalesByCategoryPieWidget(this.byId('ChartAreaRight3')).init();
 
         new SalesByEmployeeWidget(this.byId('ChartAreaLeft1')).init();
         new SalesMapWidget(this.byId('ChartAreaLeft2')).init();
