@@ -2,6 +2,7 @@ import { Decorators, LookupEditor, TemplatedWidget, LookupEditorOptions, EnumEdi
 import Chart from 'chart.js/auto';
 import { SalesByCategoryPieWidgetRequest } from "../../../ServerTypes/Common/SalesByCategoryPieWidgetRequest";
 import { SalesByCategoryPieWidgetService } from "../../../ServerTypes/Common/SalesByCategoryPieWidgetService";
+import { randomColor } from 'randomcolor';
 
 @Decorators.registerClass('DashboardSample.Common.SalesByCategoryPieWidget')
 export class SalesByCategoryPieWidget extends TemplatedWidget<any> {
@@ -11,7 +12,7 @@ export class SalesByCategoryPieWidget extends TemplatedWidget<any> {
 
     constructor(container: JQuery) {
         super(container);
-
+         
         this.initTimeSelect();
         this.initCategorySelect();
         this.initChart();
@@ -45,7 +46,6 @@ export class SalesByCategoryPieWidget extends TemplatedWidget<any> {
                     plugins: {
                         legend: { display: false }
                     }
-
                 }
             });
         }
@@ -57,10 +57,12 @@ export class SalesByCategoryPieWidget extends TemplatedWidget<any> {
             CategoryId: Number(this.categorySelect.value),
             TimeRange: this.timeSelect.value == '' ? null : Number(this.timeSelect.value)
         }, response => {
+            var colors = new randomColor({ luminosity: 'light', count: response.Points.length });
             this.myChart.data = {
                 labels: response.Points.map(c => c.Label),
                 datasets: [{
-                    data: response.Points.map(c => c.Data)
+                    data: response.Points.map(c => c.Data),
+                    backgroundColor: colors
                 }]
             };
             this.myChart.update();
